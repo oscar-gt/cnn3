@@ -502,7 +502,11 @@ struct TorchImporter : public ::cv::dnn::Importer
 
                 curModule->modules.push_back(newModule);
             }
-            else if (nnName == "SpatialMaxPooling" || nnName == "SpatialAveragePooling")
+            // ********************************************************
+			// ********** Need to add the nn.SpatialLPPooling case
+			// original line was: else if (nnName == "SpatialMaxPooling" || nnName == "SpatialAveragePooling")
+            else if (nnName == "SpatialMaxPooling" || nnName == "SpatialAveragePooling" ||
+					 nnName == "SpatialLPPooling")	// ********** Added this part)
             {
                 newModule->apiType = "Pooling";
                 readTorchTable(scalarParams, tensorParams);
@@ -511,6 +515,9 @@ struct TorchImporter : public ::cv::dnn::Importer
                     layerParams.set("pool", "MAX");
                 if (nnName == "SpatialAveragePooling")
                     layerParams.set("pool", "AVE");
+				// ****************** Adding SpatialLPPooling case
+				if (nnName == "SpatialLPPooling") 	// added this line
+					layerParams.set("pool", "LP")	// added this line
                 convertTorchKernelsParams(scalarParams, layerParams);
 
                 curModule->modules.push_back(newModule);
