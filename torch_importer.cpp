@@ -517,7 +517,7 @@ struct TorchImporter : public ::cv::dnn::Importer
                     layerParams.set("pool", "AVE");
 				// ****************** Adding SpatialLPPooling case
 				if (nnName == "SpatialLPPooling") 	// added this line
-					layerParams.set("pool", "LP")	// added this line
+					layerParams.set("pool", "LP");	// added this line
                 convertTorchKernelsParams(scalarParams, layerParams);
 
                 curModule->modules.push_back(newModule);
@@ -569,6 +569,41 @@ struct TorchImporter : public ::cv::dnn::Importer
                 curModule->modules.push_back(new Module(nnName, "Sigmoid"));
                 readObject();
             }
+			else if(nnName == "Square")
+			{
+				curModule -> modules.push_back(new Module(nnName, "Square"));
+				readObject();
+			}
+			else if(nnName == "MulConstant")
+			{
+				curModule -> modules.push_back(new Module(nnName, "MulConstant"));
+				readObject();
+			}
+			else if(nnName == "Sqrt")
+			{
+				curModule -> modules.push_back(new Module(nnName, "Sqrt"));
+				readObject();
+			}
+			else if(nnName == "SpatialSubtractiveNormalization")
+			{
+				
+			}
+			else if(nnName == "CDivTable")
+			{
+				
+			}
+			else if(nnName == "SpatialZeroPadding")
+			{
+				
+			}
+			else if(nnName == "Replicate")
+			{
+				
+			}
+			else if(nnName == "CSubTable")
+			{
+				
+			}
             else
             {
                 delete newModule;
