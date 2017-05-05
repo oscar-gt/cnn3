@@ -554,6 +554,7 @@ struct TorchImporter : public ::cv::dnn::Importer
 
                 curModule->modules.push_back(newModule);
             }
+			// Transfer functions (ReLU, Tanh, Sigmoid for now)
             else if (nnName == "ReLU")
             {
                 curModule->modules.push_back(new Module(nnName, "ReLU"));
@@ -569,6 +570,7 @@ struct TorchImporter : public ::cv::dnn::Importer
                 curModule->modules.push_back(new Module(nnName, "Sigmoid"));
                 readObject();
             }
+			// Simple layers
 			else if(nnName == "Square")
 			{
 				curModule -> modules.push_back(new Module(nnName, "Square"));
@@ -584,25 +586,61 @@ struct TorchImporter : public ::cv::dnn::Importer
 				curModule -> modules.push_back(new Module(nnName, "Sqrt"));
 				readObject();
 			}
+			else if(nnName == "Replicate")
+			{
+				curModule -> modules.push_back(new Module(nnName, "Replicate"));
+				readObject();
+			}
+			// ********* Other Convolutional layers 
 			else if(nnName == "SpatialSubtractiveNormalization")
 			{
+				newModule->apiType = "SubtractiveNorm";
+                readTorchTable(scalarParams, tensorParams);
 				
-			}
-			else if(nnName == "CDivTable")
-			{
+				// Verify that parameters were read properly
+				CV_Assert(scalarParams.has("coef") &&
+						  scalarParams.has("kernel")&&
+						  scalarParams.has("nInputPlane")&&
+						  scalarParams.has("output")&&
+						  scalarParams.has("gradInput")&&
+						  scalarParams.has("divider")&&
+						  scalarParams.has("meanestimator"));
 				
 			}
 			else if(nnName == "SpatialZeroPadding")
 			{
+				newModule->apiType = "ZeroPadding";
+                readTorchTable(scalarParams, tensorParams);
+				
+				// Verify that parameters were read
+				CV_Assert(scalarParams.has("pad_l") &&
+						  scalarParams.has("pad_t")&&
+						  scalarParams.has("pad_b")&&
+						  scalarParams.has("pad_r"));
+						  
+				layerParams.set("pad_l", static_cast<int>(scalarParams.get<double>("pad_l")));	
+				layerParams.set("pad_t", static_cast<int>(scalarParams.get<double>("pad_t")));		  
+				layerParams.set("pad_b", static_cast<int>(scalarParams.get<double>("pad_b")));		  
+				layerParams.set("pad_r", static_cast<int>(scalarParams.get<double>("pad_r")));	
+
+				curModule -> modules.push_back(newModule);
+				
 				
 			}
-			else if(nnName == "Replicate")
+			// ******** Table layers. 
+			// Implementation of CDivTable base off of 
+			// CAddTable that's implemented
+			else if(nnName == "CDivTable")
 			{
-				
+				curModule->modules.push_back(newModule);
+				readObject();
 			}
+			// Implementation of CSubTable base off of 
+			// CAddTable that's implemented
 			else if(nnName == "CSubTable")
 			{
-				
+				curModule->modules.push_back(newModule);
+				readObject();
 			}
             else
             {
