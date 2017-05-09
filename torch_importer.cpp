@@ -598,14 +598,10 @@ struct TorchImporter : public ::cv::dnn::Importer
                 readTorchTable(scalarParams, tensorParams);
 				
 				// Verify that parameters were read properly
-				CV_Assert(scalarParams.has("coef") &&
-						  scalarParams.has("kernel")&&
-						  scalarParams.has("nInputPlane")&&
-						  scalarParams.has("output")&&
-						  scalarParams.has("gradInput")&&
-						  scalarParams.has("divider")&&
-						  scalarParams.has("meanestimator"));
+				CV_Assert(scalarParams.has("nInputPlane"));
+				layerParams.set("num_input", static_cast<int>(scalarParams.get<double>("nInputPlane")));
 				
+				curModule->modules.push_back(newModule);
 			}
 			else if(nnName == "SpatialZeroPadding")
 			{
@@ -632,7 +628,7 @@ struct TorchImporter : public ::cv::dnn::Importer
 			// CAddTable that's implemented
 			else if(nnName == "CDivTable")
 			{
-				curModule->modules.push_back(newModule);
+				curModule -> modules.push_back(newModule);
 				readObject();
 			}
 			// Implementation of CSubTable base off of 
