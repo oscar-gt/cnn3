@@ -628,14 +628,16 @@ struct TorchImporter : public ::cv::dnn::Importer
 			// CAddTable that's implemented
 			else if(nnName == "CDivTable")
 			{
-				curModule -> modules.push_back(newModule);
+				curModule -> modules.push_back(new Module(nnName, "CDivTable"));
+				//curModule -> modules.push_back(newModule); // Originally this line
 				readObject();
 			}
 			// Implementation of CSubTable base off of 
 			// CAddTable that's implemented
 			else if(nnName == "CSubTable")
 			{
-				curModule->modules.push_back(newModule);
+				curModule -> modules.push_back(new Module(nnName, "CSubTable"));
+				//curModule->modules.push_back(newModule);	// Originally this line
 				readObject();
 			}
             else
