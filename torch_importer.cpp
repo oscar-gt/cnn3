@@ -57,7 +57,7 @@ static bool dbgPrint = false;
 #else
 static bool dbgPrint = true;
 #endif
-
+// ignore this comment
 enum LuaType
 {
     TYPE_NIL      = 0,
